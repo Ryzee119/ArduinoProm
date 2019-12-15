@@ -3,7 +3,7 @@
 # ArduinoProm
 
 ArduinoProm. An Arduino based Original Xbox EEPROM reader and writer.
-It can be used to recover from a corrupt BIOS or recover a HDD key etc. <br><br>
+It can be used to recover a HDD key etc. <br><br>
 ArduinoProm is inspired and adapted upon the awesome work by Grimdoomer on PiPROM, now achievable on a <$3 Arduino board.
 See https://github.com/grimdoomer/PiPROM for the Original Raspberry Pi version!
   

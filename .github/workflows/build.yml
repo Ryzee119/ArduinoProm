@@ -24,5 +24,4 @@ jobs:
       
     - name: Compile Sketch
       run: |
-        cd arduino
         arduino-cli compile -b arduino:avr:leonardo --warnings "default"

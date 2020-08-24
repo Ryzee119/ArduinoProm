@@ -22,13 +22,13 @@ This program is free software: you can redistribute it and/or modify
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	
-	ArduinoProm accepts a few very basic commands over a virtual comport interface.
-	0x00 triggers an eeprom read. ArduinoProm will send the contents of the EEPROM back (256 byte array)
-	0x01 is an eeprom write. This command should be followed with 256bytes of eeprom data.
-	0x02 will erase the Xbox eeprom (write 0x00 to all addresses)
-	0x03 will return 0x00 if the eeprom is detected.
+    ArduinoProm accepts a few very basic commands over a virtual comport interface.
+    0x00 triggers an eeprom read. ArduinoProm will send the contents of the EEPROM back (256 byte array)
+    0x01 is an eeprom write. This command should be followed with 256bytes of eeprom data.
+    0x02 will erase the Xbox eeprom (write 0x00 to all addresses)
+    0x03 will return 0x00 if the eeprom is detected.
 	
-	ArduinoProm returns -1 if an error has occured with any of these commands. It returns 0 if successful.
+    ArduinoProm returns -1 if an error has occured with any of these commands. It returns 0 if successful.
 """
 
 
@@ -55,46 +55,27 @@ def eeprom_write(data):
     time.sleep(.1)
 
     if ser.read(1)==b'\x00':
-        print("Write sucessful")
+        print("Write successful")
     return eeprom_read()
 
-
-def region_detect(argument):
-    if argument   == b'\x00\x00\x00\x00':
-        return "INVALID"
-    elif argument == b'\x00\x01\x40\x00':
-        return "NTSC-M"
-    elif argument == b'\x00\x02\x40\x00':
-        return "NTSC-J"
-    elif argument == b'\x00\x03\x80\x00':
-        return "PAL-I"
-    elif  argument == b'\x00\x04\x40\x00':
-        return "PAL-M"
-    else:
-        return "INVALID"
-    
-   
-
-
+#Main function
 if len(sys.argv) > 1:
-    comport=sys.argv[1]
-    action=sys.argv[2]
+    comport = sys.argv[1]
+    action  = sys.argv[2]
     try:
-        file=sys.argv[3]
+        file = sys.argv[3]
     except:
         if action !="ERASE":
-            print("You need to specificy a filename")
-
+            print("You need to specify a filename")
 
 try:
     ser = serial.Serial(port=comport,
                     baudrate=9600,
-                    timeout=5,
+                    timeout=10,
                     rtscts=1)
 except:
     print("Could not open",comport)
     exit()
-
 
 if action=="READ":
     print("Reading EEPROM via",comport)
@@ -103,14 +84,10 @@ if action=="READ":
         print("Saving EEPROM file to", file);
         eeprom_file = open(file, 'wb')
         eeprom_file.write(eeprom_data)
-
-        #Print some basic info from EEPROM. I don't bother with decrypting HDD Key etc.
+        #Print some basic info from EEPROM to give some confidence that it has been read ok.
         print("Xbox Serial Number:",eeprom_data[0x34:0x40])
-
-        
     else:
         print("Error Reading EEPROM. Check connections");
-
 
 if action=="WRITE":
     print("Opening EEPROM",file)
@@ -118,21 +95,20 @@ if action=="WRITE":
     eeprom_data=eeprom_file.read();
     if len(eeprom_data) == 256:
         print("WARNING: This will rewrite the EEPROM ")
-        input("Press Enter to Write EEPROM...")
+        input("Press Enter to write EEPROM...")
         print("Writing EEPROM file via", comport);
         result=eeprom_write(eeprom_data)
         print("Verifying...")
         if eeprom_data == result:
             print("Verification Successful")
         else:
-            print("Error writing eeprom")
+            print("Error writing EEPROM")
     else:
         print("Error Reading EEPROM file. Check it's not corrupt and the filename is ok");
 
-
 if action=="ERASE":
     print("WARNING: This will erase the EEPROM ")
-    input("Press Enter to Erase EEPROM...")
+    input("Press Enter to erase EEPROM...")
     ser.write(bytearray(b'\x02'))
     ser.flushOutput()
     time.sleep(.1)

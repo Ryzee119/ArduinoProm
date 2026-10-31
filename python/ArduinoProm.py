@@ -65,14 +65,18 @@ if len(sys.argv) > 1:
     try:
         file = sys.argv[3]
     except:
-        if action !="ERASE":
+        if action not in ("ERASE", "DETECT"):
             print("You need to specify a filename")
 
 try:
     ser = serial.Serial(port=comport,
                     baudrate=9600,
                     timeout=10,
-                    rtscts=1)
+                    rtscts=0)
+    
+    # I added a delay for boards with a USB-serial chip (e.g. Uno/CH340) because they auto-reset when the port
+    # is opened.
+    time.sleep(2)
 except:
     print("Could not open",comport)
     exit()
@@ -105,6 +109,18 @@ if action=="WRITE":
             print("Error writing EEPROM")
     else:
         print("Error Reading EEPROM file. Check it's not corrupt and the filename is ok");
+
+if action=="DETECT":
+    print("Detecting EEPROM via",comport)
+    ser.flushInput()
+    ser.flushOutput()
+    ser.write(bytearray(b'\x03'))
+    ser.flushOutput()
+    time.sleep(.1)
+    if ser.read(1)==b'\x00':
+        print("EEPROM detected (I2C ACK at 0x54). Wiring/bus OK.")
+    else:
+        print("EEPROM NOT detected. Check SDA/SCL wiring.")
 
 if action=="ERASE":
     print("WARNING: This will erase the EEPROM ")

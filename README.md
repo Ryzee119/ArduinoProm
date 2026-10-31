@@ -14,6 +14,9 @@ See https://github.com/grimdoomer/PiPROM for the Original Raspberry Pi version!
 ![installed photo](https://i.imgur.com/fokwQjY.jpg)
 ## Arduino Setup
 The firmware has been written around the Arduino Pro Micro Leonardo (5V/16Mhz). However I would expect it to work on any Arduino with a built in USB bootloader/Virtual Comport support, and obviously I2C support.
+
+If you use an Uno R3 please note two things. The I2C pins are in a different place: SDA is A4 and SCL is A5, not D2 and D3 as on the Leonardo.
+
 1. Open `ArduinoProm.ino` in [Arduino IDE](https://www.arduino.cc/en/main/software)
 2. Connect your Arduino to your PC and setup the IDE. An example below <br> ![Arduino IDE preview](https://i.imgur.com/V7CJpkd.png)
 3. Hit the program button then confirm it compiles and programs successfully.
@@ -45,6 +48,9 @@ python ArduinoProm.py COM1 WRITE eeprom.bin
 
 //Write all 0's to the EEPROM effectively erasing it.
 python ArduinoProm.py COM1 ERASE
+
+//Check the EEPROM responds on the bus without reading it. Useful to confirm wiring.
+python ArduinoProm.py COM1 DETECT
 ```
 Example outputs:  
 ![Write](https://i.imgur.com/mRRVvAb.png)
@@ -53,4 +59,4 @@ Example outputs:
 
 ![Erase](https://i.imgur.com/r6GWkpm.png)
 
-By Ryzee119
+By Ryzee119, updated by Sam Stockstrom for the UNO R3

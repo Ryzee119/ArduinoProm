@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Xbox EEPROM dumps
+*.bin
+eeprom.bin
